@@ -1,0 +1,14 @@
+// filepath: /Users/development/otherProjects/ws-js/cryptoStatement/tsconfig.json
+{
+  "compilerOptions": {
+    "outDir": "./dist", // Output directory for compiled files
+    "rootDir": "./src", // Root directory of TypeScript files
+    "target": "ES6", // Target ECMAScript version
+    "module": "CommonJS", // Module system
+    "strict": true, // Enable strict type-checking options
+    "esModuleInterop": true, // Enable interoperability between CommonJS and ES modules
+    "skipLibCheck": true // Skip type checking of declaration files
+  },
+  "include": ["src/**/*"], // Include all TypeScript files in the src folder
+  "exclude": ["node_modules", "dist"] // Exclude node_modules and dist folders
+}
