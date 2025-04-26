@@ -8,13 +8,15 @@
   "dependencies": {
     "@types/node": "^22.15.2",
     "axios": "^1.9.0",
+    "fs-extra": "^11.3.0",
     "viem": "^2.28.0"
   },
   "scripts": {
-    "start": "node dist/index.js",
-    "start:debug": "node --inspect-brk dist/index.js"
+    "start": "tsc && node dist/index.js",
+    "start:debug": "tsc && node --inspect-brk dist/index.js"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "typescript": "^5.8.3"
   }
 }

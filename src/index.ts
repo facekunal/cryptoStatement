@@ -1,5 +1,8 @@
 import * as readline from "readline";
-import { fetchTransactions, TransferType } from "./transfers";
+import { fetchTransactions } from "./transfers";
+import { exportToCSV } from "./repository";
+import path from "path";
+import { TransferType } from "./commons/types";
 
 async function main() {
   const rl = readline.createInterface({
@@ -21,11 +24,14 @@ async function main() {
 
       console.log("Transactions fetched successfully:", transactions);
 
-      // const outputFile = path.resolve(__dirname, "transaction_history.csv");
-      // console.log(`Exporting transactions to ${outputFile}...`);
-      //exportToCSV(transactions, outputFile);
+      const outputFile = path.resolve(__dirname, `../outputs/${walletAddress}_transaction_history.csv`);
+      console.log(`Exporting transactions to ${outputFile}...`);
+
+      if (transactions.length > 0) {
+        await exportToCSV(transactions, outputFile);
+      }
     } catch (error) {
-      console.error("Failed to process transactions:");
+      console.error("Failed to process transactions:", error);
     } finally {
       rl.close();
     }

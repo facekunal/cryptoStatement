@@ -1,13 +1,8 @@
 import { createPublicClient, http, parseAbi } from "viem";
 import { mainnet } from "viem/chains";
-import { Transaction, TransferType } from ".";
+import { Transaction, TransferType } from "../commons/types";
+import { RPCS, TOTAL_BLOCKS } from "../commons/config";
 
-// TODO: save in some config file
-const RPCS = [
-    "https://1rpc.io/eth",
-    "https://eth.llamarpc.com",
-    "https://eth.drpc.org",
-];
 
 /**
  * Fetches ERC20 transactions for a given wallet address.
@@ -18,8 +13,6 @@ const RPCS = [
 export async function fetchTransactions(walletAddress: `0x${string}`): Promise<Transaction[]> {
   const BLOCK_RANGE = BigInt(1000);
 
-  // Move total blocks outside so that transactions are fetched in chunks and saved
-  const TOTAL_BLOCKS = BigInt(20000);
   let allTransactions: Transaction[] = [];
   let rpcIndex = 0;
 
