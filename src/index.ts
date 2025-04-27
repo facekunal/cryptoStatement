@@ -1,8 +1,14 @@
+/**
+ * Entry point for the cryptoStatement script.
+ * 
+ * This script prompts the user for an Ethereum wallet address, fetches the transaction
+ * history for that address, and exports the results to a CSV file in the outputs directory.
+ */
+
 import * as readline from "readline";
 import { fetchTransactions } from "./transfers";
-import { exportToCSV } from "./repository";
+import { CSVExporter } from "./repository";
 import path from "path";
-import { TransferType } from "./commons/types";
 
 async function main() {
   const rl = readline.createInterface({
@@ -18,17 +24,20 @@ async function main() {
     }
 
     try {
-      console.log("Fetching transactions...");
-      // @ts-ignore
-      const transactions = await fetchTransactions(TransferType.ERC20, walletAddress);
 
-      console.log("Transactions fetched successfully:", transactions);
-
+      // set the output file path
       const outputFile = path.resolve(__dirname, `../outputs/${walletAddress}_transaction_history.csv`);
-      console.log(`Exporting transactions to ${outputFile}...`);
+      CSVExporter.setOutputFile(outputFile);
 
+      // @ts-ignore
+      const transactions = await fetchTransactions(walletAddress);
+      console.log(`Transactions fetched successfully: ${transactions?.length}`);
+
+      // save to csv
       if (transactions.length > 0) {
-        await exportToCSV(transactions, outputFile);
+        await CSVExporter.export(transactions);
+      } else {
+        console.log("No transactions found for the given wallet address. Try increasing the block range.");
       }
     } catch (error) {
       console.error("Failed to process transactions:", error);
