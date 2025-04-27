@@ -46,21 +46,25 @@ export class CSVExporter {
             "Transaction Hash",
             "Block Hash",
             "Block Number",
+            "Timestamp",
             "From",
             "To",
             "Token Amount",
             "Transaction Type",
             "Asset Contract Address",
+            "Asset Metadata",
         ];
         const csvRows = transactions.map((tx) => [
             tx.transactionHash,
             tx.blockHash,
             tx.blockNumber.toString(),
+            "", // TODO: Add timestamp
             tx.from || "",
             tx.to || "",
             tx.amount?.toString() || "0",
             tx.transactionType,
             tx.assetContractAddress,
+            JSON.stringify(tx.metadata || ""),
         ]);
 
         const csvContent = [csvHeader, ...csvRows]

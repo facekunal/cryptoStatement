@@ -2,7 +2,7 @@ import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 
 // The total number of blocks to fetched
-export const TOTAL_BLOCKS = BigInt(2_000);
+export const TOTAL_BLOCKS = BigInt(3_000);
 
 /**
  * List of RPC endpoints

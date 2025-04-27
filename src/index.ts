@@ -9,6 +9,7 @@ import * as readline from "readline";
 import { fetchTransactions } from "./transfers";
 import { CSVExporter } from "./repository";
 import path from "path";
+import { checksumAddress, getAddress } from "viem";
 
 async function main() {
   const rl = readline.createInterface({
@@ -17,8 +18,8 @@ async function main() {
   });
 
   rl.question("Enter Ethereum wallet address: ", async (walletAddress: string) => {
-    if (!walletAddress) {
-      console.error("Error: Wallet address cannot be empty.");
+    if (!getAddress(walletAddress)) {
+      console.error("Error: Invalid wallet address.");
       rl.close();
       return;
     }
@@ -29,8 +30,7 @@ async function main() {
       const outputFile = path.resolve(__dirname, `../outputs/${walletAddress}_transaction_history.csv`);
       CSVExporter.setOutputFile(outputFile);
 
-      // @ts-ignore
-      const transactions = await fetchTransactions(walletAddress);
+      const transactions = await fetchTransactions(getAddress(walletAddress));
       console.log(`Transactions fetched successfully: ${transactions?.length}`);
 
       // save to csv

@@ -9,6 +9,7 @@
     "@types/node": "^22.15.2",
     "axios": "^1.9.0",
     "fs-extra": "^11.3.0",
+    "jest": "^29.7.0",
     "viem": "^2.28.0"
   },
   "scripts": {
@@ -16,7 +17,12 @@
     "start:debug": "tsc && node --inspect-brk dist/index.js"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-typescript": "^7.27.0",
     "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^29.5.14",
+    "@types/mocha": "^10.0.10",
+    "babel-jest": "^29.7.0",
     "typescript": "^5.8.3"
   }
 }

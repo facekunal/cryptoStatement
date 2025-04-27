@@ -1,4 +1,6 @@
-import { Transaction, TransferType } from "../commons/types";
+import { Transaction } from "../commons/types";
+import { getTokenInfo } from "../tokens";
+import { TokenType } from "../tokens/types";
 import { Erc1155Fetcher } from "./erc1155";
 import { Erc20Fetcher } from "./erc20";
 import { Erc721Fetcher } from "./erc721";
@@ -12,8 +14,18 @@ import { EthFetcher } from "./eth";
  */
 export async function fetchTransactions(walletAddress: `0x${string}`): Promise<Transaction[]> {
     // Note: can be done for all TransferTypes in Promise
-    const fetcher = TransactionFetcherFactory.getFetcher(TransferType.ERC20);
-    const transactions = await fetcher.fetchTransactions(walletAddress);
+    const fetcher = TransactionFetcherFactory.getFetcher(TokenType.ERC20);
+    let transactions = await fetcher.fetchTransactions(walletAddress);
+
+    // for each item in transactions, get token info using getTokenInfo method then assign to item's metadata property
+    console.log("Updating metadata for transactions...");
+    for (const transaction of transactions) {
+        const tokenInfo = await getTokenInfo(transaction.assetContractAddress, transaction.transactionType);
+        if (tokenInfo) {
+            transaction.metadata = tokenInfo;
+        }
+        // else don't update metadata
+    }
 
     return transactions;
 }
@@ -36,15 +48,15 @@ class TransactionFetcherFactory {
    * @returns An instance of a class implementing TransactionFetcher.
    * @throws {Error} If the transfer type is unsupported.
    */
-  static getFetcher(transferType: TransferType): TransactionFetcher {
+  static getFetcher(transferType: TokenType): TransactionFetcher {
     switch (transferType) {
-      case TransferType.ETH:
+      case TokenType.ETH:
         return new EthFetcher();
-      case TransferType.ERC20:
+      case TokenType.ERC20:
         return new Erc20Fetcher();
-      case TransferType.ERC721:
+      case TokenType.ERC721:
         return new Erc721Fetcher();
-      case TransferType.ERC1155:
+      case TokenType.ERC1155:
         return new Erc1155Fetcher();
       default:
         throw new Error(`Unsupported token type: ${transferType}`);

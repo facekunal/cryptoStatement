@@ -1,8 +1,9 @@
 import { parseAbi } from "viem";
-import { Transaction, TransferType } from "../commons/types";
+import { Transaction } from "../commons/types";
 import { CLIENTS, TOTAL_BLOCKS } from "../commons/config";
 import { TransactionFetcher } from ".";
 import { Network } from "../networks";
+import { TokenType } from "../tokens/types";
 
 export class Erc20Fetcher implements TransactionFetcher {
 
@@ -45,7 +46,7 @@ export class Erc20Fetcher implements TransactionFetcher {
               from: log.args.from,
               to: log.args.to,
               amount: log.args.value,
-              transactionType: TransferType.ERC20,
+              transactionType: TokenType.ERC20,
               assetContractAddress: log.address,
             };
           });
@@ -70,7 +71,7 @@ export class Erc20Fetcher implements TransactionFetcher {
               from: log.args.from,
               to: log.args.to,
               amount: log.args.value,
-              transactionType: TransferType.ERC20,
+              transactionType: TokenType.ERC20,
               assetContractAddress: log.address,
             };
           });
