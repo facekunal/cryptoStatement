@@ -1,3 +1,5 @@
+// Note: Only to be used if transaction fetched data doesn't include token information like name, symbol, nft standard, etc.
+// Currently not used in this project.
 /**
  * This module will provide functionality for fetching token information.
  */
@@ -66,8 +68,6 @@ export async function detectNFTStandard(contractAddress: `0x${string}`): Promise
   return detected;
 }
 
-// Note: Only to be used if transaction fetched data doesn't include token information.
-// Currently not used in this project.
 /**
  * Fetch token metadata (name, symbol, decimals, etc.) for a given contract address and token type.
  * 

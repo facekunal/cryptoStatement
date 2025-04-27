@@ -3,7 +3,6 @@ import { TOTAL_BLOCKS } from "../../commons/config";
 import { Network } from "../../networks";
 import { Transaction } from "../../commons/types";
 import { TokenType } from "../../tokens/types";
-import { detectNFTStandard } from "../../tokens";
 import 'dotenv/config';
 
 /**
@@ -130,7 +129,7 @@ export async function fetchERC721TransactionsFromBlockscout(walletAddress: `0x${
         to: tx.to,
         amount: "1", // NFTs are usually transferred as single units
         fee: calculateFee(tx.gasPrice, tx.gasUsed),
-        transactionType: await detectNFTStandard(tx.contractAddress),
+        transactionType: TokenType.ERC721,
         assetContractAddress: tx.contractAddress,
         metadata: {
           name: tx.tokenName,
@@ -180,7 +179,7 @@ export async function fetchERC721TransactionsFromEtherscan(walletAddress: `0x${s
         to: tx.to,
         amount: "1", // NFTs are usually transferred as single units
         fee: calculateFee(tx.gasPrice, tx.gasUsed),
-        transactionType: await detectNFTStandard(tx.contractAddress),
+        transactionType: TokenType.ERC721,
         assetContractAddress: tx.contractAddress,
         metadata: {
           name: tx.tokenName,
