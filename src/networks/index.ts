@@ -13,23 +13,32 @@ export class Network {
   private static clients: PublicClient[] = CLIENTS;
 
   /**
+   * Cached block number to avoid redundant network calls.
+   */
+  private static cachedBlockNumber: bigint | null = null;
+
+  /**
    * Private constructor to prevent instantiation of the Network class.
    * All methods are static and should be accessed directly from the class.
    */
-  private constructor() {}
+  private constructor() { }
 
   /**
    * Fetches the latest block number from the available clients.
-   * Iterates through the configured clients and returns the block number from the first
-   * client that responds successfully. If all clients fail, an error is thrown.
+   * Caches the result for the lifetime of the process (single run).
    *
    * @returns {Promise<bigint>} The latest block number as a bigint.
    * @throws {Error} If all clients fail to fetch the latest block number.
    */
   static async fetchLatestBlockNumber(): Promise<bigint> {
+    if (Network.cachedBlockNumber !== null) {
+      return Network.cachedBlockNumber;
+    }
+
     for (const client of Network.clients) {
       try {
         const blockNumber = await client.getBlockNumber();
+        Network.cachedBlockNumber = blockNumber;
         return blockNumber;
       } catch (error) {
         console.error(`Error fetching block number from client: ${error}`);
