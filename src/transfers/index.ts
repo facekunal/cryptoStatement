@@ -1,10 +1,6 @@
 import { Transaction } from "../commons/types";
-import { getTokenInfo } from "../tokens";
 import { TokenType } from "../tokens/types";
-import { Erc1155Fetcher } from "./erc1155";
-import { Erc20Fetcher } from "./erc20";
-import { Erc721Fetcher } from "./erc721";
-import { EthFetcher } from "./eth";
+import { Erc1155Fetcher, Erc20Fetcher, Erc721Fetcher, EthFetcher } from "./transactionFetchers";
 
 /**
  * Fetches transactions for a given wallet address using the appropriate fetcher.
@@ -13,19 +9,22 @@ import { EthFetcher } from "./eth";
  * @returns Promise resolving to an array of Transaction objects.
  */
 export async function fetchTransactions(walletAddress: `0x${string}`): Promise<Transaction[]> {
-    // Note: can be done for all TransferTypes in Promise
-    const fetcher = TransactionFetcherFactory.getFetcher(TokenType.ERC20);
-    let transactions = await fetcher.fetchTransactions(walletAddress);
+    // Fetch for all supported token types in parallel
+    const fetchers = [
+        TransactionFetcherFactory.getFetcher(TokenType.ETH),
+        TransactionFetcherFactory.getFetcher(TokenType.ERC20),
+        TransactionFetcherFactory.getFetcher(TokenType.ERC721),
+        TransactionFetcherFactory.getFetcher(TokenType.ERC1155),
+    ];
 
-    // for each item in transactions, get token info using getTokenInfo method then assign to item's metadata property
-    console.log("Updating metadata for transactions...");
-    for (const transaction of transactions) {
-        const tokenInfo = await getTokenInfo(transaction.assetContractAddress, transaction.transactionType);
-        if (tokenInfo) {
-            transaction.metadata = tokenInfo;
-        }
-        // else don't update metadata
-    }
+    const results = await Promise.allSettled(
+        fetchers.map(fetcher => fetcher.fetchTransactions(walletAddress))
+    );
+
+    // Flatten successful results, ignore rejected ones
+    const transactions = results
+        .filter(r => r.status === "fulfilled")
+        .flatMap((r: any) => r.value);
 
     return transactions;
 }
@@ -44,7 +43,7 @@ export interface TransactionFetcher {
 class TransactionFetcherFactory {
   /**
    * Returns an instance of the appropriate TransactionFetcher for the given transfer type.
-   * @param transferType The type of transfer (ETH, ERC20, ERC721, ERC1155).
+   * @param transferType The type of transfer (ETH, ERC20, etc).
    * @returns An instance of a class implementing TransactionFetcher.
    * @throws {Error} If the transfer type is unsupported.
    */
@@ -58,6 +57,7 @@ class TransactionFetcherFactory {
         return new Erc721Fetcher();
       case TokenType.ERC1155:
         return new Erc1155Fetcher();
+      case TokenType.UNRESOLVED_NFT:
       default:
         throw new Error(`Unsupported token type: ${transferType}`);
     }

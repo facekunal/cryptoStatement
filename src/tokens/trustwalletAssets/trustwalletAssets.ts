@@ -25,7 +25,11 @@ const trustWalletAssetsMap: TrustWalletAssetsMap = {};
 if (Array.isArray(assets)) {
   for (const token of assets) {
     if (token.address) {
-      trustWalletAssetsMap[token.address.toLowerCase()] = token;
+      trustWalletAssetsMap[token.address.toLowerCase()] = {
+        name: token.name,
+        symbol: token.symbol,
+        decimals: token.decimals,
+      };
     }
   }
 }
